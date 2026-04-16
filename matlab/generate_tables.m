@@ -21,6 +21,14 @@ end
 
 function writePivotTable(data, valueField, outputPath)
 subset = data(:, {'dataset_size', 'structure_name', valueField});
-pivot = unstack(subset, valueField, 'structure_name');
+subset.structure_column = makeStructureColumnNames(subset.structure_name);
+subset = subset(:, {'dataset_size', 'structure_column', valueField});
+pivot = unstack(subset, valueField, 'structure_column');
 writetable(pivot, outputPath);
+end
+
+function structureColumns = makeStructureColumnNames(structureNames)
+structureColumns = replace(structureNames, "B+ Tree", "BPlusTree");
+structureColumns = replace(structureColumns, "B-Tree", "BTree");
+structureColumns = matlab.lang.makeValidName(structureColumns, 'ReplacementStyle', 'delete');
 end
